@@ -1,14 +1,6 @@
-"""
-Emotion Detection Module using Watson NLP
-"""
-
 import requests
 
 def emotion_detector(text_to_analyse):
-    """
-    This function sends text to the Watson NLP emotion detection service
-    and returns the response in JSON format.
-    """
 
     if not text_to_analyse:
         return None
@@ -25,4 +17,21 @@ def emotion_detector(text_to_analyse):
 
     response = requests.post(url, json=input_json, headers=headers)
 
-    return response.json()
+    if response.status_code == 200:
+        formatted_response = response.json()
+
+        emotions = formatted_response['emotionPredictions'][0]['emotion']
+
+        dominant_emotion = max(emotions, key=emotions.get)
+
+        return {
+            'anger': emotions['anger'],
+            'disgust': emotions['disgust'],
+            'fear': emotions['fear'],
+            'joy': emotions['joy'],
+            'sadness': emotions['sadness'],
+            'dominant_emotion': dominant_emotion
+        }
+
+    else:
+        return None
